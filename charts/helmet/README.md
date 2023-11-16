@@ -66,7 +66,38 @@ ingress:
   enabled: true
 ```
 
-5. Install the chart:
+5. Modify `helm/env/<environment>` config files  
+    Templates contain an example `appsettings.json` so helm won' skip the folder creation.
+    As an example, place the `.env` file in `helm/env/shared`, and override it in other environments as needed.
+    > **Note**  
+    > If a file is present in both `helm/env/shared` and in e.g `helm/env/test` the environment specific file takes
+    > precedence. This is because after the merge, the environment specific key will be last in the
+    > configmap, and kubernetes uses the last key if there are duplicates.  
+    >  
+    > This is done for scenarios where it's ok to use one shared config for e.g review and staging, and a 
+    > separate for production.
+
+6. Add external network dependencies (if applicable)  
+    As an example, if your application needs to access `api.utdanning.no`, then in `/helm/network-policies/shared` you would add the file `allow-api-utdanningno.yaml`  
+    ```
+    egress:
+    - toFQDNs:
+      - matchName: "api.utdanning.no"
+      toPorts:
+      - ports:
+        - port: "443"
+          protocol: TCP
+    ```
+7. Modify the `values.yaml` file and other `values-<environment>.yaml` files  
+    Some example tweaks;  
+    - volumeMounts for config files in previous step
+    - image repository
+    - image tag (semantic release CI will update whenever it's triggered in master branch)
+    - envFrom to use configMaps/secrets keys as environment variables
+    - volumes/volumeMounts should you want to mount [secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-a-secret) or [configMaps](https://kubernetes.io/docs/concepts/configuration/configmap/#using-configmaps-as-files-from-a-pod) as files
+
+
+8. Install the chart:
 ```shell
 $ helm install nginx .
 ```
