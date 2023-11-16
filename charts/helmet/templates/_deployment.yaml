@@ -65,7 +65,7 @@ spec:
           {{- if .Values.envVars }}
           env: {{- include "helmet.toEnvArray" (dict "envVars" .Values.envVars "context" $) | indent 12 }}
           - name: DEPLOY_ENV
-            value: "{{ .Values.configs.env }}"
+            value: "{{ .Values.env }}"
           {{- end }}
           {{- if or .Values.envVarsConfigMap .Values.envVarsSecret .Values.envFrom }}
           envFrom:
