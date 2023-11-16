@@ -1,4 +1,4 @@
-# Company.info Helm Charts
+# serit Helm Charts
 serit Helm charts repository.
 
 ## Usage
