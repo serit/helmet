@@ -1,0 +1,53 @@
+{{- define "helmet.ciliumNetworkPolicies" -}}
+---
+# to keep 'self' reference for nested loops
+{{- $self := . -}} 
+# build list of directories from which the files are picked - shared, then environment class, then environment + flavour
+{{- $sources := (list "shared" .Values.env) }}
+
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "helmet.serviceAccountName" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.serviceAccount.labels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.serviceAccount.labels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.commonAnnotations .Values.serviceAccount.annotations }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.serviceAccount.annotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.serviceAccount.annotations "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+specs:
+  - endpointSelector:
+      matchLabels: {{- include "common.labels.matchLabels" . | nindent 8 }}
+    {{- if .Values.ingress.enabled }}
+    ingress:
+      - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ingress-nginx
+            app.kubernetes.io/component: controller
+        toPorts:
+        - ports:
+        {{- range .Values.service.ports }}
+          - port: "{{ .port }}"
+            protocol: "{{ .protocol }}"
+        {{- end }}
+    {{- end }}
+    {{- range $env := $sources }}
+    {{- range $path, $bytes := $self.Files.Glob (printf "network-policies/%s/*" $env) }}
+  - endpointSelector:
+      matchLabels:
+        {{- include "common.labels.matchLabels" $ | nindent 8 }}
+    {{- tpl ($self.Files.Get $path) $ | nindent 4 }}
+    {{- end }}
+    {{- end }}
+{{- end -}}

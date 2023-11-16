@@ -64,8 +64,10 @@ spec:
           {{- end }}
           {{- if .Values.envVars }}
           env: {{- include "helmet.toEnvArray" (dict "envVars" .Values.envVars "context" $) | indent 12 }}
+          - name: DEPLOY_ENV
+            value: "{{ .Values.configs.env }}"
           {{- end }}
-          {{- if or .Values.envVarsConfigMap .Values.envVarsSecret }}
+          {{- if or .Values.envVarsConfigMap .Values.envVarsSecret .Values.envFrom }}
           envFrom:
             {{- if .Values.envVarsConfigMap }}
             - configMapRef:
@@ -74,6 +76,9 @@ spec:
             {{- if .Values.envVarsSecret }}
             - secretRef:
                 name: {{ include "common.tplvalues.render" (dict "value" .Values.envVarsSecret "context" $) }}
+            {{- end }}
+            {{- with .Values.envFrom }}
+            {{- toYaml . | nindent 12}}
             {{- end }}
           {{- end }}
           {{- if .Values.ports }}
@@ -94,17 +99,17 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
-          {{- if or .Values.configMap.mounted .Values.extraVolumeMounts }}
+          {{- if or .Values.configMap.mounted .Values.volumeMounts }}
           volumeMounts:
             {{- if .Values.configMap.mounted }}
-            - name: {{ include "common.names.fullname" . }}
+            - name: config
               mountPath: {{ .Values.configMap.mountPath }}
               {{- if .Values.configMap.subPath }}
               subPath: {{ .Values.configMap.subPath }}
               {{- end }}
             {{- end }}
-            {{- if .Values.extraVolumeMounts }}
-            {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- if .Values.volumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.volumeMounts "context" $) | nindent 12 }}
             {{- end }}
           {{- end }}
         {{- if .Values.sidecars }}
@@ -113,7 +118,7 @@ spec:
       {{- if or .Values.configMap.mounted .Values.extraVolumes }}
       volumes:
         {{- if .Values.configMap.mounted }}
-        - name: {{ include "common.names.fullname" . }}
+        - name: config
           configMap:
             name: {{ include "common.names.fullname" . }}
         {{- end }}

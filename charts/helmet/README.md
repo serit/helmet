@@ -86,6 +86,7 @@ $ helm install nginx .
 
 | Name                | Description                                                                                                | Value             |
 |---------------------|------------------------------------------------------------------------------------------------------------|-------------------|
+| `env`               | Dictates DEPLOY_ENV environment variable, and folders used for configmaps, networkpolicies, etc            | `""`              |
 | `kubeVersion`       | Force target Kubernetes version (using Helm capabilities if not set)                                       | `""`              |
 | `nameOverride`      | String to partially override common.names.fullname template with a string (will maintain the release name) | `""`              |
 | `fullnameOverride`  | String to fully override common.names.fullname template with a string                                      | `""`              |
@@ -144,14 +145,15 @@ $ helm install nginx .
 | `updateStrategy.type`                   | APP deployment strategy type                                                                                             | `RollingUpdate`                                                  |
 | `updateStrategy.rollingUpdate`          | APP deployment rolling update configuration parameters                                                                   | `{}`                                                             |
 | `extraVolumes`                          | Optionally specify extra list of additional volumes for the APP pod(s)                                                   | `[]`                                                             |
-| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for the APP container(s)                                        | `[]`                                                             |
+| `volumeMounts`                          | Optionally specify extra list of additional volumeMounts for the APP container(s)                                        | `[]`                                                             |
 | `sidecars`                              | Add additional sidecar containers to the APP pod(s)                                                                      | `[]`                                                             |
 | `initContainers`                        | Add additional init containers to the APP pod(s)                                                                         | `[]`                                                             |
 | `command`                               | Override main container's command                                                                                        | `[]`                                                             |
 | `args`                                  | Override main container's args                                                                                           | `[]`                                                             |
-| `envVars`                               | Environment variables to be set on APP container                                                                         | `{} or []`                                                             |
+| `envVars`                               | Environment variables to be set on APP container                                                                         | `{} or []`                                                       |
 | `envVarsConfigMap`                      | ConfigMap with environment variables                                                                                     | `""`                                                             |
-| `envVarsSecret`                         | Secret with environment variables                                                                                        | `""`                                                             |
+| `envVarsSecret`                         | Secret with environment variables                                                                                        | `[]`                                                             |
+| `envFrom`                               | ConfigMap/secret array with environment variables
 
 
 ### Autoscaling parameters
@@ -171,7 +173,7 @@ $ helm install nginx .
 | Name                    | Description                                     | Value         |
 |-------------------------|-------------------------------------------------|---------------|
 | `configMap.mounted`     | Mount the ConfigMap in the main container       | `false`       |
-| `configMap.mountPath`   | ConfigMap mount path                            | `/app/config` |
+| `configMap.mountPath`   | ConfigMap mount path                            | `/app/` |
 | `configMap.subPath`     | ConfigMap sub path                              | `""`          |
 | `configMap.data`        | ConfigMap data                                  | `{}`          |
 | `configMap.annotations` | Additional custom annotations for the ConfigMap | `{}`          |
@@ -199,7 +201,7 @@ $ helm install nginx .
 | `ingress.pathType`         | Ingress path type                                                                             | `ImplementationSpecific` |
 | `ingress.hostname`         | Default host for the ingress resource, a host pointing to this will be created                | `app.local`              |
 | `ingress.annotations`      | Additional annotations for the Ingress resource                                               | `{}`                     |
-| `ingress.ingressClassName` | Set the ingerssClassName on the ingress record for k8s 1.18+                                  | `""`                     |
+| `ingress.className` | Set the ingerssClassName on the ingress record for k8s 1.18+                                  | `nginx`                     |
 | `ingress.tls`              | Enable TLS configuration for the hostname defined at ingress.hostname parameter               | `false`                  |
 | `ingress.extraHosts`       | An array with additional hostname(s) to be covered with the ingress record                    | `[]`                     |
 | `ingress.extraPaths`       | Any additional arbitrary paths that may need to be added to the ingress under the main host   | `[]`                     |
@@ -222,6 +224,12 @@ $ helm install nginx .
 | `service.loadBalancerSourceRanges` | APP service Load Balancer sources                                | `[]`                                                                      |
 | `service.externalTrafficPolicy`    | APP service external traffic policy                              | `Cluster`                                                                 |
 | `service.annotations`              | Additional custom annotations for APP service                    | `{}`                                                                      |
+
+### network policies (Cilium) parameters
+
+| Name                               | Description                                                      | Value                                                                     |
+|------------------------------------|------------------------------------------------------------------|---------------------------------------------------------------------------|
+| `ciliumNetworkPolicy.enabled`    | enable cilium netowrk policies for APP                           | `true`                                                                    |
 
 
 ### Prometheus Operator ServiceMonitor parameters

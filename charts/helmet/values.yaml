@@ -20,6 +20,10 @@ exports:
 
     ## @section Common parameters
 
+    ## @param env Dictates DEPLOY_ENV environment variable, and folders used for configmaps, networkpolicies, etc
+    ##
+    env: ""
+
     ## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
     ##
     kubeVersion: ""
@@ -68,7 +72,7 @@ exports:
     ## @param image.pullSecrets Image pull secrets
     ##
     image:
-      registry: docker.io
+      registry: ""
       repository: ""
       tag: latest
       digest: ""
@@ -101,7 +105,7 @@ exports:
     ##
     ports:
       - name: http
-        containerPort: 8080
+        containerPort: 3000
         protocol: TCP
 
     ## Configure extra options for liveness probe
@@ -359,13 +363,13 @@ exports:
     ##
     extraVolumes: []
 
-    ## @param extraVolumeMounts Array to add extra mounts (normally used with extraVolumes, evaluated as a template)
+    ## @param volumeMounts Array to add extra mounts (normally used with extraVolumes, evaluated as a template)
     ## Example:
-    ## extraVolumeMounts:
+    ## volumeMounts:
     ##   - name: vol-conf
     ##     mountPath: "/app/config"
     ##
-    extraVolumeMounts: []
+    volumeMounts: []
 
     ## @param sidecars Add additional sidecar containers to the APP pods
     ## Example:
@@ -416,6 +420,15 @@ exports:
     ## @param envVarsSecret Secret with environment variables
     ##
     envVarsSecret: ""
+
+    ## @param env from configmap or secret
+    ## Example:
+    ## envFrom:
+    ## - configMapRef:
+    ##     name: my-configmap
+    ## - secretRef:
+    ##     name: my-secret
+    envFrom: []
 
     ## Add an horizontal pod autoscaler
     ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
@@ -528,11 +541,11 @@ exports:
       ##
       annotations: {}
 
-      ## @param ingress.ingressClassName Set the ingerssClassName on the ingress record for k8s 1.18+
+      ## @param ingress.className Set the ingerssClassName on the ingress record for k8s 1.18+
       ## This is supported in Kubernetes 1.18+ and required if you have more than one IngressClass marked as the default for your cluster .
       ## ref: https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/
       ##
-      ingressClassName: ""
+      className: "nginx"
 
       ## @param ingress.tls Enable TLS configuration for the hostname defined at ingress.hostname parameter
       ## TLS certificates will be retrieved from a TLS secret with name: {{- printf "%s-tls" .Values.ingress.hostname }}
@@ -619,7 +632,7 @@ exports:
       ports:
         - name: http
           protocol: TCP
-          port: 80
+          port: 3000
           targetPort: http
 
       ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin
@@ -655,6 +668,11 @@ exports:
       ## @param service.annotations Additional custom annotations for APP service
       ##
       annotations: {}
+
+    ## APP network policy parameters
+    ##
+    ciliumNetworkPolicy:
+      enabled: true
 
     ## Prometheus Operator ServiceMonitor configuration
     ##
@@ -786,7 +804,7 @@ exports:
       ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
       ## Can be set to false if pods using this serviceAccount do not need to use K8s API
       ##
-      automountServiceAccountToken: true
+      automountServiceAccountToken: false
 
       ## @param serviceAccount.annotations Additional custom annotations for the ServiceAccount
       ##

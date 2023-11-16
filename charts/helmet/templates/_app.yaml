@@ -1,7 +1,6 @@
 {{- define "helmet.app" -}}
-{{- if .Values.configMap.data }}
+
 {{ include "helmet.configmap" . }}
-{{- end }}
 
 {{- if .Values.image.repository }}
 {{ include "helmet.deployment" . }}
@@ -21,7 +20,12 @@
 {{ include "helmet.service" . }}
 {{- end }}
 
+{{- if .Values.ciliumNetworkPolicy.enabled }}
+{{ include "helmet.ciliumNetworkPolicies" . }}
+{{- end }}
+
 {{ include "helmet.serviceaccount" . }}
 {{ include "helmet.servicemonitor" . }}
 {{ include "helmet.podmonitor" . }}
+{{ include "helmet.sealed-secrets" . }}
 {{- end }}

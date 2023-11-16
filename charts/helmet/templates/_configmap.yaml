@@ -21,8 +21,8 @@ metadata:
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- end }}
   {{- end }}
-{{- if .Values.configMap.data }}
 data:
+{{- if .Values.configMap.data }}
   {{- range $k, $v := .Values.configMap.data }}
   {{- $configKey := (include "common.tplvalues.render" (dict "value" $k "context" $)) }}
   {{- $configValue := (include "common.tplvalues.render" (dict "value" $v "context" $)) }}
@@ -32,5 +32,13 @@ data:
   {{ $configKey }}: {{ $configValue }}
   {{- end }}
   {{- end }}
+# Allow parsing files from /env/shared and /shared/<env> folder
+{{- end }}
+{{- $self := . -}} 
+{{- $sources := (list "shared" .Values.env) }}
+{{- range $env := $sources }}
+{{- range $path, $bytes := $self.Files.Glob (printf "env/%s/*" $env) }}
+  {{ base $path }}: {{ tpl ($self.Files.Get $path) $ | quote }}
+{{- end }}
 {{- end }}
 {{- end -}}
