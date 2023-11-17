@@ -1,12 +1,12 @@
-# Company.info Helm Charts [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/companyinfo)](https://artifacthub.io/packages/search?repo=companyinfo)
-Company.info Helm charts repository.
+# serit Helm Charts 
+serit Helm charts repository.
 
 ## TL;DR
 
 ```bash
-$ helm repo add companyinfo https://companyinfo.github.io/helm-charts
-$ helm search repo companyinfo
-$ helm install my-release companyinfo/<chart>
+$ helm repo add serit https://serit.github.io/helmet
+$ helm search repo serit
+$ helm install my-release serit/<chart>
 ```
 
 ## Before you begin
@@ -27,18 +27,18 @@ To install Helm, refer to the [Helm install guide](https://github.com/helm/helm#
 The following command allows you to download and install all the charts from this repository:
 
 ```bash
-$ helm repo add companyinfo https://companyinfo.github.io/helm-charts
+$ helm repo add serit https://serit.github.io/helm-charts
 ```
 
 ### Using Helm
 
-Once you have installed the Helm client, you can deploy a Company.info Helm Chart into a Kubernetes cluster.
+Once you have installed the Helm client, you can deploy a serit Helm Chart into a Kubernetes cluster.
 
 Please refer to the [Quick Start guide](https://helm.sh/docs/intro/quickstart/) if you wish to get running in just a few commands, otherwise the [Using Helm Guide](https://helm.sh/docs/intro/using_helm/) provides detailed instructions on how to use the Helm client to manage packages on your Kubernetes cluster.
 
 Useful Helm Client Commands:
 * View available charts: `helm search repo`
-* Install a chart: `helm install my-release companyinfo/<package-name>`
+* Install a chart: `helm install my-release serit/<package-name>`
 * Upgrade your application: `helm upgrade`
 
 ## License
