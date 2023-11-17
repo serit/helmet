@@ -78,11 +78,11 @@ ingress:
     > separate for production.
 
 6. Add external network dependencies (if applicable)  
-    As an example, if your application needs to access `api.utdanning.no`, then in `/helm/network-policies/shared` you would add the file `allow-api-utdanningno.yaml`  
+    As an example, if your application needs to access `api.example.com`, then in `/helm/network-policies/shared` you would add the file `allow-api-example.yaml`  
     ```
     egress:
     - toFQDNs:
-      - matchName: "api.utdanning.no"
+      - matchName: "api.example.com"
       toPorts:
       - ports:
         - port: "443"
