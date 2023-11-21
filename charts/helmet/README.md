@@ -241,6 +241,7 @@ $ helm install nginx .
 | `ingress.secrets`          | If you're providing your own certificates, please use this to add the certificates as secrets | `[]`                     |
 | `ingress.existingSecret`   | It is you own the certificate as secret                                                       | `""`                     |
 | `ingress.extraRules`       | Additional rules to be covered with this ingress record                                       | `[]`                     |
+| `ingress.defaultBackend`   | Backend to serve if app is down                                                               | `{}`                     |
 
 
 ### Traffic Exposure (Service) parameters

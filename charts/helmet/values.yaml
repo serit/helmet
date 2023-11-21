@@ -620,6 +620,23 @@ exports:
       ##
       extraRules: []
 
+      ## @param ingress.defaultBackend default backend to serve an error page
+      ## ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#default-backend
+      ## e.g:
+      ## defaultBackend:
+      ##  enabled: true
+      ##  image: ""
+      ##  port: ""
+      ##  annotation: ""
+      ##  imagePullSecret:
+      ##  - name: ""
+      defaultBackend: 
+        enabled: false
+        image: registry.gitlab.com/serit/test/default-backend-sentry 
+        port: 8000
+        imagePullSecret:
+        - name: "gitlab-pull-secret"
+
     ## APP service parameters
     ##
     service:

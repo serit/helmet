@@ -6,6 +6,10 @@
 {{ include "helmet.deployment" . }}
 {{- end }}
 
+{{- if .Values.ingress.defaultBackend.enabled }}
+{{ include "helmet.defaultBackend" . }}
+{{- end }}
+
 {{ include "helmet.hpa" . }}
 {{ include "helmet.ingress" . }}
 
